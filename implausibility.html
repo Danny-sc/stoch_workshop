@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>6 Implausibility | Workshop 2: calibrating a stochastic model</title>
+  <meta name="description" content="An interactive introduction to the hmer package" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="6 Implausibility | Workshop 2: calibrating a stochastic model" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="An interactive introduction to the hmer package" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="6 Implausibility | Workshop 2: calibrating a stochastic model" />
+  
+  <meta name="twitter:description" content="An interactive introduction to the hmer package" />
+  
+
+<meta name="author" content="Danny Scarponi, Andy Iskauskas" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="emulators.html"/>
+<link rel="next" href="emulator-diagnostics.html"/>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script language="javascript"> 
+    function toggle(id) {
+        var ele = document.getElementById("toggleText" + id);
+        var text = document.getElementById("displayText" + id);
+        var buttonText = text.innerHTML.replace("Show: ", "");
+        buttonText = buttonText.replace("Hide: ", "");
+        if(ele.style.display == "block") {
+            ele.style.display = "none";
+            text.innerHTML = "Show: " + buttonText;
+        } else {
+            ele.style.display = "block";
+            text.innerHTML = "Hide: " + buttonText;
+        }
+    } 
+</script>
+
+<script language="javascript">
+    function openCode(evt, codeName, id) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent" + id);
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks" + id);
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(codeName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+</script>
+
+<script language="javascript">
+    function hide(id){
+        document.getElementById(id).style.display = "none";
+    }
+</script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Objectives</a></li>
+<li class="chapter" data-level="2" data-path="an-overview-of-history-matching-with-emulation-and-hmer.html"><a href="an-overview-of-history-matching-with-emulation-and-hmer.html"><i class="fa fa-check"></i><b>2</b> An overview of history matching with emulation and hmer</a></li>
+<li class="chapter" data-level="3" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>3</b> Introduction to the model</a></li>
+<li class="chapter" data-level="4" data-path="wave0---parameter-ranges-targets-and-design-points.html"><a href="wave0---parameter-ranges-targets-and-design-points.html"><i class="fa fa-check"></i><b>4</b> ‘wave0’ - parameter ranges, targets and design points</a></li>
+<li class="chapter" data-level="5" data-path="emulators.html"><a href="emulators.html"><i class="fa fa-check"></i><b>5</b> Emulators</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="emulators.html"><a href="emulators.html#brief-recap-on-the-structure-of-an-emulator"><i class="fa fa-check"></i><b>5.1</b> Brief recap on the structure of an emulator</a></li>
+<li class="chapter" data-level="5.2" data-path="emulators.html"><a href="emulators.html#stochastic-emulators"><i class="fa fa-check"></i><b>5.2</b> Stochastic emulators</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="implausibility.html"><a href="implausibility.html"><i class="fa fa-check"></i><b>6</b> Implausibility</a></li>
+<li class="chapter" data-level="7" data-path="emulator-diagnostics.html"><a href="emulator-diagnostics.html"><i class="fa fa-check"></i><b>7</b> Emulator diagnostics</a></li>
+<li class="chapter" data-level="8" data-path="proposing-new-points.html"><a href="proposing-new-points.html"><i class="fa fa-check"></i><b>8</b> Proposing new points</a></li>
+<li class="chapter" data-level="9" data-path="second-wave.html"><a href="second-wave.html"><i class="fa fa-check"></i><b>9</b> Second wave</a></li>
+<li class="chapter" data-level="10" data-path="visualisation-of-the-non-implausible-space-by-wave.html"><a href="visualisation-of-the-non-implausible-space-by-wave.html"><i class="fa fa-check"></i><b>10</b> Visualisation of the non-implausible space by wave</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Workshop 2: calibrating a stochastic model</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="implausibility" class="section level1" number="6">
+<h1><span class="header-section-number">6</span> Implausibility</h1>
+<p>We quickly review the definition of implausibility measure. For a given model output and a given target, the implausibility measures the difference between the emulator output and the target, taking into account all sources of uncertainty. For a parameter set <span class="math inline">\(x\)</span>, the general form for the implausibility <span class="math inline">\(\text{Imp}(x)\)</span> is</p>
+<p><span class="math display">\[\text{Imp}(x) = \frac{|f(x)-z|}{\sqrt{V_0 + V_c(x)+V_s+V_m}},\]</span></p>
+<p>where <span class="math inline">\(f(x)\)</span> is the emulator output, <span class="math inline">\(z\)</span> the target, and the terms in the denominator refer to various forms of uncertainty. In particular</p>
+<ul>
+<li><span class="math inline">\(V_0\)</span> is the variance associated with the observation uncertainty;</li>
+<li><span class="math inline">\(V_c(x)\)</span> refers to the uncertainty one introduces when using the emulator output instead of the model output itself;</li>
+<li><span class="math inline">\(V_s\)</span> is the ensemble variability and represents the stochastic nature of the model;</li>
+<li><span class="math inline">\(V_m\)</span> is the model discrepancy, accounting for possible mismatches between the model and reality.</li>
+</ul>
+<p>Since in this case study we want to emulate our model, without reference to a real-life analogue, the model represents the reality perfectly. For this reason we have <span class="math inline">\(V_m=0\)</span>. The term <span class="math inline">\(V_s\)</span>, which was zero when we worked on the deterministic SEIRS model (<a href="https://danny-sc.github.io/determ_workshop/index.html">Workshop 1</a>), is now different from zero, in order to account for the stochasticity of the model.</p>
+<p>A very large value of <span class="math inline">\(\text{Imp}(x)\)</span> means that we can be confident that the parameter set <span class="math inline">\(x\)</span> does not provide a good match to the observed data, even factoring in the additional uncertainty that comes with the use of emulators.</p>
+<p>To plot the maximum implausibility (across all emulators), we set <code>plot_type</code> to <code>nimp</code> in the call to <code>emulator_plot</code>:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="implausibility.html#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emulator_plot</span>(stoch_emulators, <span class="at">plot_type =</span> <span class="st">&#39;nimp&#39;</span>, </span>
+<span id="cb22-2"><a href="implausibility.html#cb22-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">targets =</span> targets, <span class="at">params =</span> <span class="fu">c</span>(<span class="st">&#39;epsilon&#39;</span>, <span class="st">&#39;alpha&#39;</span>))</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-24-1.png" style="display: block; margin: auto;" /></p>
+<div class="panel panel-default">
+<div class="panel-heading">
+Task
+</div>
+<div class="panel-body">
+Use the argument <code>fixed_vals</code> to set the parameters that are not shown in the plot to be as in <code>chosen_params</code>. Verify that the implausibility at <code>chosen_params</code> is below 3.
+</div>
+</div>
+<button id="displayTextunnamed-chunk-26" onclick="javascript:toggle(&#39;unnamed-chunk-26&#39;);">
+Show: Solution
+</button>
+<div id="toggleTextunnamed-chunk-26" style="display: none">
+<div class="panel panel-default">
+<div class="panel-heading panel-heading1">
+Solution
+</div>
+<div class="panel-body">
+<p>We set <code>fixed_vals</code> to <code>chosen_params[!names(chosen_params) %in% c('epsilon', 'alpha')]</code>, plot the maximum implausibility and add a point corresponding to the values of <span class="math inline">\(\sigma\)</span> and <span class="math inline">\(alpha\)</span> in <code>chosen_params</code>:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="implausibility.html#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emulator_plot</span>(stoch_emulators, <span class="at">plot_type =</span> <span class="st">&#39;nimp&#39;</span>, <span class="at">targets =</span> targets,</span>
+<span id="cb23-2"><a href="implausibility.html#cb23-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">params =</span> <span class="fu">c</span>(<span class="st">&#39;epsilon&#39;</span>, <span class="st">&#39;alpha&#39;</span>),</span>
+<span id="cb23-3"><a href="implausibility.html#cb23-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">fixed_vals =</span> chosen_params[<span class="sc">!</span><span class="fu">names</span>(chosen_params) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&#39;epsilon&#39;</span>, <span class="st">&#39;alpha&#39;</span>)], </span>
+<span id="cb23-4"><a href="implausibility.html#cb23-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">cb=</span>T) <span class="sc">+</span><span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span><span class="dv">1</span><span class="sc">/</span><span class="dv">7</span>, <span class="at">y=</span><span class="dv">1</span><span class="sc">/</span><span class="dv">50</span>), <span class="at">size=</span><span class="dv">3</span>)</span></code></pre></div>
+<img src="_main_files/figure-html/unnamed-chunk-50-1.png" style="display: block; margin: auto;" />
+The plot shows what we expected: when <span class="math inline">\(\epsilon\)</span> and <span class="math inline">\(\alpha\)</span> are equal to their values in <code>chosen_params</code>, the implausibility measure is below the threshold <span class="math inline">\(3\)</span> (cf. black point in the box).
+</div>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="emulators.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="emulator-diagnostics.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": null,
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

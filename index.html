@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Workshop 2: calibrating a stochastic model</title>
+  <meta name="description" content="An interactive introduction to the hmer package" />
+  <meta name="generator" content="bookdown 0.24 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Workshop 2: calibrating a stochastic model" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="An interactive introduction to the hmer package" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Workshop 2: calibrating a stochastic model" />
+  
+  <meta name="twitter:description" content="An interactive introduction to the hmer package" />
+  
+
+<meta name="author" content="Danny Scarponi, Andy Iskauskas" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+
+<link rel="next" href="an-overview-of-history-matching-with-emulation-and-hmer.html"/>
+<script src="libs/header-attrs-2.11/header-attrs.js"></script>
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.0.1/anchor-sections.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.0.1/anchor-sections.js"></script>
+<script language="javascript"> 
+    function toggle(id) {
+        var ele = document.getElementById("toggleText" + id);
+        var text = document.getElementById("displayText" + id);
+        var buttonText = text.innerHTML.replace("Show: ", "");
+        buttonText = buttonText.replace("Hide: ", "");
+        if(ele.style.display == "block") {
+            ele.style.display = "none";
+            text.innerHTML = "Show: " + buttonText;
+        } else {
+            ele.style.display = "block";
+            text.innerHTML = "Hide: " + buttonText;
+        }
+    } 
+</script>
+
+<script language="javascript">
+    function openCode(evt, codeName, id) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent" + id);
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks" + id);
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(codeName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+</script>
+
+<script language="javascript">
+    function hide(id){
+        document.getElementById(id).style.display = "none";
+    }
+</script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #c4a000; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #000000; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #000000; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #000000; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Objectives</a></li>
+<li class="chapter" data-level="2" data-path="an-overview-of-history-matching-with-emulation-and-hmer.html"><a href="an-overview-of-history-matching-with-emulation-and-hmer.html"><i class="fa fa-check"></i><b>2</b> An overview of history matching with emulation and hmer</a></li>
+<li class="chapter" data-level="3" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>3</b> Introduction to the model</a></li>
+<li class="chapter" data-level="4" data-path="wave0---parameter-ranges-targets-and-design-points.html"><a href="wave0---parameter-ranges-targets-and-design-points.html"><i class="fa fa-check"></i><b>4</b> ‘wave0’ - parameter ranges, targets and design points</a></li>
+<li class="chapter" data-level="5" data-path="emulators.html"><a href="emulators.html"><i class="fa fa-check"></i><b>5</b> Emulators</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="emulators.html"><a href="emulators.html#brief-recap-on-the-structure-of-an-emulator"><i class="fa fa-check"></i><b>5.1</b> Brief recap on the structure of an emulator</a></li>
+<li class="chapter" data-level="5.2" data-path="emulators.html"><a href="emulators.html#stochastic-emulators"><i class="fa fa-check"></i><b>5.2</b> Stochastic emulators</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="implausibility.html"><a href="implausibility.html"><i class="fa fa-check"></i><b>6</b> Implausibility</a></li>
+<li class="chapter" data-level="7" data-path="emulator-diagnostics.html"><a href="emulator-diagnostics.html"><i class="fa fa-check"></i><b>7</b> Emulator diagnostics</a></li>
+<li class="chapter" data-level="8" data-path="proposing-new-points.html"><a href="proposing-new-points.html"><i class="fa fa-check"></i><b>8</b> Proposing new points</a></li>
+<li class="chapter" data-level="9" data-path="second-wave.html"><a href="second-wave.html"><i class="fa fa-check"></i><b>9</b> Second wave</a></li>
+<li class="chapter" data-level="10" data-path="visualisation-of-the-non-implausible-space-by-wave.html"><a href="visualisation-of-the-non-implausible-space-by-wave.html"><i class="fa fa-check"></i><b>10</b> Visualisation of the non-implausible space by wave</a></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Workshop 2: calibrating a stochastic model</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="header">
+<h1 class="title">Workshop 2: calibrating a stochastic model</h1>
+<p class="author"><em>Danny Scarponi, Andy Iskauskas</em></p>
+</div>
+<div id="objectives" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Objectives</h1>
+<p>In this workshop, you will learn to perform history matching with emulation on models with stochasticity, using the <a href="https://github.com/Tandethsquire/hmer">hmer</a> package. This workshop should be addressed after working on <a href="https://danny-sc.github.io/determ_workshop/index.html">Workshop 1</a>, which shows how to perform history matching with emulation on deterministic models.</p>
+<p><infobutton id="displayTextunnamed-chunk-2" onclick="javascript:toggle('unnamed-chunk-2');">Show: Code to load relevant libraries and helper functions</infobutton></p>
+<div id="toggleTextunnamed-chunk-2" style="display: none">
+<div class="panel panel-default">
+<div class="panel-body">
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="index.html#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(hmer)</span>
+<span id="cb1-2"><a href="index.html#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lhs)</span>
+<span id="cb1-3"><a href="index.html#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(deSolve)</span>
+<span id="cb1-4"><a href="index.html#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-5"><a href="index.html#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(reshape2)</span>
+<span id="cb1-6"><a href="index.html#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb1-7"><a href="index.html#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-8"><a href="index.html#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="do">############################# HELPER FUNCTIONS #############################</span></span>
+<span id="cb1-9"><a href="index.html#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Function that calculates the mean of the model outputs from several runs </span></span>
+<span id="cb1-10"><a href="index.html#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># at the same parameter set </span></span>
+<span id="cb1-11"><a href="index.html#cb1-11" aria-hidden="true" tabindex="-1"></a>aggregate_points <span class="ot">&lt;-</span> <span class="cf">function</span>(data, input_names, <span class="at">func =</span> <span class="st">&#39;mean&#39;</span>) {</span>
+<span id="cb1-12"><a href="index.html#cb1-12" aria-hidden="true" tabindex="-1"></a>  unique_points <span class="ot">&lt;-</span> <span class="fu">unique</span>(data[,input_names])</span>
+<span id="cb1-13"><a href="index.html#cb1-13" aria-hidden="true" tabindex="-1"></a>  uids <span class="ot">&lt;-</span> <span class="fu">apply</span>(unique_points, <span class="dv">1</span>, rlang<span class="sc">::</span>hash)</span>
+<span id="cb1-14"><a href="index.html#cb1-14" aria-hidden="true" tabindex="-1"></a>  data_by_point <span class="ot">&lt;-</span> purrr<span class="sc">::</span><span class="fu">map</span>(uids, <span class="cf">function</span>(h) {</span>
+<span id="cb1-15"><a href="index.html#cb1-15" aria-hidden="true" tabindex="-1"></a>    data[<span class="fu">apply</span>(data[,input_names], <span class="dv">1</span>, rlang<span class="sc">::</span>hash) <span class="sc">==</span> h,]</span>
+<span id="cb1-16"><a href="index.html#cb1-16" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="cb1-17"><a href="index.html#cb1-17" aria-hidden="true" tabindex="-1"></a>  aggregate_func <span class="ot">&lt;-</span> <span class="fu">get</span>(func)</span>
+<span id="cb1-18"><a href="index.html#cb1-18" aria-hidden="true" tabindex="-1"></a>  aggregate_values <span class="ot">&lt;-</span> <span class="fu">do.call</span>(<span class="st">&#39;rbind.data.frame&#39;</span>, purrr<span class="sc">::</span><span class="fu">map</span>(data_by_point, <span class="cf">function</span>(x) {</span>
+<span id="cb1-19"><a href="index.html#cb1-19" aria-hidden="true" tabindex="-1"></a>    output_data <span class="ot">&lt;-</span> x[,<span class="sc">!</span>(<span class="fu">names</span>(x) <span class="sc">%in%</span> input_names)]</span>
+<span id="cb1-20"><a href="index.html#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">apply</span>(output_data, <span class="dv">2</span>, aggregate_func)</span>
+<span id="cb1-21"><a href="index.html#cb1-21" aria-hidden="true" tabindex="-1"></a>  }))</span>
+<span id="cb1-22"><a href="index.html#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">setNames</span>(<span class="fu">cbind.data.frame</span>(unique_points, aggregate_values), <span class="fu">names</span>(data)))</span>
+<span id="cb1-23"><a href="index.html#cb1-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-24"><a href="index.html#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Function that implements the SEIRS stochastic model using the Gillespie algorithm</span></span>
+<span id="cb1-25"><a href="index.html#cb1-25" aria-hidden="true" tabindex="-1"></a>gillespied<span class="ot">=</span><span class="cf">function</span> (N, <span class="at">T=</span><span class="dv">400</span>, <span class="at">dt=</span><span class="dv">1</span>, ...)</span>
+<span id="cb1-26"><a href="index.html#cb1-26" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb1-27"><a href="index.html#cb1-27" aria-hidden="true" tabindex="-1"></a>  tt<span class="ot">=</span><span class="dv">0</span></span>
+<span id="cb1-28"><a href="index.html#cb1-28" aria-hidden="true" tabindex="-1"></a>  n<span class="ot">=</span>T<span class="sc">%/%</span>dt</span>
+<span id="cb1-29"><a href="index.html#cb1-29" aria-hidden="true" tabindex="-1"></a>  x<span class="ot">=</span>N<span class="sc">$</span>M</span>
+<span id="cb1-30"><a href="index.html#cb1-30" aria-hidden="true" tabindex="-1"></a>  S<span class="ot">=</span><span class="fu">t</span>(N<span class="sc">$</span>Post<span class="sc">-</span>N<span class="sc">$</span>Pre)</span>
+<span id="cb1-31"><a href="index.html#cb1-31" aria-hidden="true" tabindex="-1"></a>  u<span class="ot">=</span><span class="fu">nrow</span>(S)</span>
+<span id="cb1-32"><a href="index.html#cb1-32" aria-hidden="true" tabindex="-1"></a>  v<span class="ot">=</span><span class="fu">ncol</span>(S)</span>
+<span id="cb1-33"><a href="index.html#cb1-33" aria-hidden="true" tabindex="-1"></a>  xmat<span class="ot">=</span><span class="fu">matrix</span>(<span class="dv">0</span>,<span class="at">ncol=</span>u,<span class="at">nrow=</span>n)</span>
+<span id="cb1-34"><a href="index.html#cb1-34" aria-hidden="true" tabindex="-1"></a>  i<span class="ot">=</span><span class="dv">1</span></span>
+<span id="cb1-35"><a href="index.html#cb1-35" aria-hidden="true" tabindex="-1"></a>  target<span class="ot">=</span><span class="dv">0</span></span>
+<span id="cb1-36"><a href="index.html#cb1-36" aria-hidden="true" tabindex="-1"></a>  <span class="cf">repeat</span> {</span>
+<span id="cb1-37"><a href="index.html#cb1-37" aria-hidden="true" tabindex="-1"></a>    h<span class="ot">=</span>N<span class="sc">$</span><span class="fu">h</span>(x, tt, ...)</span>
+<span id="cb1-38"><a href="index.html#cb1-38" aria-hidden="true" tabindex="-1"></a>    h0<span class="ot">=</span><span class="fu">sum</span>(h)</span>
+<span id="cb1-39"><a href="index.html#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (h0<span class="sc">&lt;</span><span class="fl">1e-10</span>)</span>
+<span id="cb1-40"><a href="index.html#cb1-40" aria-hidden="true" tabindex="-1"></a>      tt<span class="ot">=</span><span class="fl">1e99</span></span>
+<span id="cb1-41"><a href="index.html#cb1-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span></span>
+<span id="cb1-42"><a href="index.html#cb1-42" aria-hidden="true" tabindex="-1"></a>      tt<span class="ot">=</span>tt<span class="sc">+</span><span class="fu">rexp</span>(<span class="dv">1</span>,h0)</span>
+<span id="cb1-43"><a href="index.html#cb1-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> (tt<span class="sc">&gt;=</span>target) {</span>
+<span id="cb1-44"><a href="index.html#cb1-44" aria-hidden="true" tabindex="-1"></a>      xmat[i,]<span class="ot">=</span>x</span>
+<span id="cb1-45"><a href="index.html#cb1-45" aria-hidden="true" tabindex="-1"></a>      i<span class="ot">=</span>i<span class="sc">+</span><span class="dv">1</span></span>
+<span id="cb1-46"><a href="index.html#cb1-46" aria-hidden="true" tabindex="-1"></a>      target<span class="ot">=</span>target<span class="sc">+</span>dt</span>
+<span id="cb1-47"><a href="index.html#cb1-47" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (i<span class="sc">&gt;</span>n)</span>
+<span id="cb1-48"><a href="index.html#cb1-48" aria-hidden="true" tabindex="-1"></a>        <span class="fu">return</span>(xmat)</span>
+<span id="cb1-49"><a href="index.html#cb1-49" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-50"><a href="index.html#cb1-50" aria-hidden="true" tabindex="-1"></a>    j<span class="ot">=</span><span class="fu">sample</span>(v,<span class="dv">1</span>,<span class="at">prob=</span>h)</span>
+<span id="cb1-51"><a href="index.html#cb1-51" aria-hidden="true" tabindex="-1"></a>    x<span class="ot">=</span>x<span class="sc">+</span>S[,j]</span>
+<span id="cb1-52"><a href="index.html#cb1-52" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-53"><a href="index.html#cb1-53" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-54"><a href="index.html#cb1-54" aria-hidden="true" tabindex="-1"></a>Num <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb1-55"><a href="index.html#cb1-55" aria-hidden="true" tabindex="-1"></a>N<span class="ot">=</span><span class="fu">list</span>()</span>
+<span id="cb1-56"><a href="index.html#cb1-56" aria-hidden="true" tabindex="-1"></a>N<span class="sc">$</span>M<span class="ot">=</span><span class="fu">c</span>(<span class="dv">900</span>,<span class="dv">100</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>)</span>
+<span id="cb1-57"><a href="index.html#cb1-57" aria-hidden="true" tabindex="-1"></a>N<span class="sc">$</span>Pre <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
+<span id="cb1-58"><a href="index.html#cb1-58" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
+<span id="cb1-59"><a href="index.html#cb1-59" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
+<span id="cb1-60"><a href="index.html#cb1-60" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
+<span id="cb1-61"><a href="index.html#cb1-61" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
+<span id="cb1-62"><a href="index.html#cb1-62" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
+<span id="cb1-63"><a href="index.html#cb1-63" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
+<span id="cb1-64"><a href="index.html#cb1-64" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,</span>
+<span id="cb1-65"><a href="index.html#cb1-65" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>), <span class="at">ncol =</span> <span class="dv">5</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-66"><a href="index.html#cb1-66" aria-hidden="true" tabindex="-1"></a>N<span class="sc">$</span>Post <span class="ot">=</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
+<span id="cb1-67"><a href="index.html#cb1-67" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
+<span id="cb1-68"><a href="index.html#cb1-68" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,</span>
+<span id="cb1-69"><a href="index.html#cb1-69" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
+<span id="cb1-70"><a href="index.html#cb1-70" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,</span>
+<span id="cb1-71"><a href="index.html#cb1-71" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,</span>
+<span id="cb1-72"><a href="index.html#cb1-72" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>,<span class="dv">0</span>,</span>
+<span id="cb1-73"><a href="index.html#cb1-73" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">1</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,</span>
+<span id="cb1-74"><a href="index.html#cb1-74" aria-hidden="true" tabindex="-1"></a>                  <span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">0</span>,<span class="dv">1</span>), <span class="at">ncol =</span> <span class="dv">5</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-75"><a href="index.html#cb1-75" aria-hidden="true" tabindex="-1"></a>N<span class="sc">$</span>h<span class="ot">=</span><span class="cf">function</span>(x,t,<span class="at">th=</span><span class="fu">rep</span>(<span class="dv">1</span>,<span class="dv">9</span>))</span>
+<span id="cb1-76"><a href="index.html#cb1-76" aria-hidden="true" tabindex="-1"></a>{</span>
+<span id="cb1-77"><a href="index.html#cb1-77" aria-hidden="true" tabindex="-1"></a>  Num <span class="ot">=</span> x[<span class="dv">1</span>]<span class="sc">+</span>x[<span class="dv">2</span>]<span class="sc">+</span>x[<span class="dv">3</span>]<span class="sc">+</span>x[<span class="dv">4</span>]</span>
+<span id="cb1-78"><a href="index.html#cb1-78" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (t <span class="sc">&gt;</span> <span class="dv">270</span>) tns <span class="ot">&lt;-</span> th[<span class="dv">5</span>]</span>
+<span id="cb1-79"><a href="index.html#cb1-79" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (t <span class="sc">&gt;</span> <span class="dv">180</span>) tns <span class="ot">&lt;-</span> (th[<span class="dv">5</span>]<span class="sc">-</span>th[<span class="dv">4</span>])<span class="sc">*</span>t<span class="sc">/</span><span class="dv">90</span><span class="sc">+</span><span class="dv">3</span><span class="sc">*</span>th[<span class="dv">4</span>]<span class="sc">-</span><span class="dv">2</span><span class="sc">*</span>th[<span class="dv">5</span>]</span>
+<span id="cb1-80"><a href="index.html#cb1-80" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> <span class="cf">if</span> (t <span class="sc">&gt;</span> <span class="dv">100</span>) tns <span class="ot">&lt;-</span> th[<span class="dv">4</span>]</span>
+<span id="cb1-81"><a href="index.html#cb1-81" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span> tns <span class="ot">&lt;-</span> (th[<span class="dv">4</span>]<span class="sc">-</span>th[<span class="dv">3</span>])<span class="sc">*</span>t<span class="sc">/</span><span class="dv">100</span><span class="sc">+</span>th[<span class="dv">3</span>]</span>
+<span id="cb1-82"><a href="index.html#cb1-82" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(</span>
+<span id="cb1-83"><a href="index.html#cb1-83" aria-hidden="true" tabindex="-1"></a>    <span class="fu">c</span>(th[<span class="dv">1</span>]<span class="sc">*</span>Num,</span>
+<span id="cb1-84"><a href="index.html#cb1-84" aria-hidden="true" tabindex="-1"></a>      tns<span class="sc">*</span>x[<span class="dv">3</span>]<span class="sc">*</span>x[<span class="dv">1</span>]<span class="sc">/</span>Num,</span>
+<span id="cb1-85"><a href="index.html#cb1-85" aria-hidden="true" tabindex="-1"></a>      th[<span class="dv">2</span>]<span class="sc">*</span>x[<span class="dv">1</span>],</span>
+<span id="cb1-86"><a href="index.html#cb1-86" aria-hidden="true" tabindex="-1"></a>      th[<span class="dv">6</span>]<span class="sc">*</span>x[<span class="dv">2</span>],</span>
+<span id="cb1-87"><a href="index.html#cb1-87" aria-hidden="true" tabindex="-1"></a>      th[<span class="dv">2</span>]<span class="sc">*</span>x[<span class="dv">2</span>],</span>
+<span id="cb1-88"><a href="index.html#cb1-88" aria-hidden="true" tabindex="-1"></a>      (th[<span class="dv">7</span>]<span class="sc">+</span>th[<span class="dv">2</span>])<span class="sc">*</span>x[<span class="dv">3</span>],</span>
+<span id="cb1-89"><a href="index.html#cb1-89" aria-hidden="true" tabindex="-1"></a>      th[<span class="dv">8</span>]<span class="sc">*</span>x[<span class="dv">3</span>],</span>
+<span id="cb1-90"><a href="index.html#cb1-90" aria-hidden="true" tabindex="-1"></a>      th[<span class="dv">9</span>]<span class="sc">*</span>x[<span class="dv">4</span>],</span>
+<span id="cb1-91"><a href="index.html#cb1-91" aria-hidden="true" tabindex="-1"></a>      th[<span class="dv">2</span>]<span class="sc">*</span>x[<span class="dv">4</span>])</span>
+<span id="cb1-92"><a href="index.html#cb1-92" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb1-93"><a href="index.html#cb1-93" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-94"><a href="index.html#cb1-94" aria-hidden="true" tabindex="-1"></a><span class="co"># Function that takes a dataframe of parameter sets and returns </span></span>
+<span id="cb1-95"><a href="index.html#cb1-95" aria-hidden="true" tabindex="-1"></a><span class="co"># the model outputs from 100 runs at each parameter set</span></span>
+<span id="cb1-96"><a href="index.html#cb1-96" aria-hidden="true" tabindex="-1"></a>get_results <span class="ot">&lt;-</span> <span class="cf">function</span>(params, <span class="at">nreps =</span> <span class="dv">100</span>, outs, times, <span class="at">raw =</span> <span class="cn">FALSE</span>) {</span>
+<span id="cb1-97"><a href="index.html#cb1-97" aria-hidden="true" tabindex="-1"></a>  tseq <span class="ot">&lt;-</span> <span class="dv">0</span><span class="sc">:</span><span class="fu">max</span>(times)</span>
+<span id="cb1-98"><a href="index.html#cb1-98" aria-hidden="true" tabindex="-1"></a>  arra <span class="ot">&lt;-</span> <span class="fu">array</span>(<span class="dv">0</span>, <span class="at">dim =</span> <span class="fu">c</span>(<span class="fu">max</span>(tseq)<span class="sc">+</span><span class="dv">1</span>, <span class="dv">5</span>, nreps))</span>
+<span id="cb1-99"><a href="index.html#cb1-99" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nreps) arra[,,i] <span class="ot">&lt;-</span> <span class="fu">gillespied</span>(N,<span class="at">T=</span><span class="fu">max</span>(times) <span class="sc">+</span> <span class="dv">1</span> <span class="sc">+</span> <span class="fl">0.001</span>,<span class="at">dt=</span><span class="dv">1</span>,<span class="at">th=</span>params)</span>
+<span id="cb1-100"><a href="index.html#cb1-100" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(raw) <span class="fu">return</span>(arra)</span>
+<span id="cb1-101"><a href="index.html#cb1-101" aria-hidden="true" tabindex="-1"></a>  collected <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb1-102"><a href="index.html#cb1-102" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>nreps) {</span>
+<span id="cb1-103"><a href="index.html#cb1-103" aria-hidden="true" tabindex="-1"></a>    relev <span class="ot">&lt;-</span> <span class="fu">c</span>(arra[times<span class="sc">+</span><span class="dv">1</span>, <span class="fu">which</span>(<span class="fu">c</span>(<span class="st">&quot;S&quot;</span>, <span class="st">&quot;E&quot;</span>, <span class="st">&quot;I&quot;</span>, <span class="st">&quot;R&quot;</span>, <span class="st">&quot;D&quot;</span>) <span class="sc">%in%</span> outs), i])</span>
+<span id="cb1-104"><a href="index.html#cb1-104" aria-hidden="true" tabindex="-1"></a>    names <span class="ot">&lt;-</span> <span class="fu">unlist</span>(purrr<span class="sc">::</span><span class="fu">map</span>(outs, <span class="sc">~</span><span class="fu">paste0</span>(., times, <span class="at">sep =</span> <span class="st">&quot;&quot;</span>)))</span>
+<span id="cb1-105"><a href="index.html#cb1-105" aria-hidden="true" tabindex="-1"></a>    relev <span class="ot">&lt;-</span> <span class="fu">setNames</span>(relev, names)</span>
+<span id="cb1-106"><a href="index.html#cb1-106" aria-hidden="true" tabindex="-1"></a>    collected[[i]] <span class="ot">&lt;-</span> relev</span>
+<span id="cb1-107"><a href="index.html#cb1-107" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-108"><a href="index.html#cb1-108" aria-hidden="true" tabindex="-1"></a>  input_dat <span class="ot">&lt;-</span> <span class="fu">setNames</span>(<span class="fu">data.frame</span>(<span class="fu">matrix</span>(<span class="fu">rep</span>(params, nreps), <span class="at">ncol =</span> <span class="fu">length</span>(params), <span class="at">byrow =</span> <span class="cn">TRUE</span>)), <span class="fu">names</span>(params))</span>
+<span id="cb1-109"><a href="index.html#cb1-109" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">cbind</span>(input_dat, <span class="fu">do.call</span>(<span class="st">&#39;rbind&#39;</span>, collected)))</span>
+<span id="cb1-110"><a href="index.html#cb1-110" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+</div>
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+
+<a href="an-overview-of-history-matching-with-emulation-and-hmer.html" class="navigation navigation-next navigation-unique" aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": null,
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
