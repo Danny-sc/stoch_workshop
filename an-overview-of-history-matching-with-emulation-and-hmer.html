@@ -215,10 +215,9 @@ Figure 2.1: History matching with emulation workflow
 <p>As shown in the above image, history matching with emulation proceeds in the following way:</p>
 <ol style="list-style-type: decimal">
 <li>The model is run on the initial design points, a manageable number of parameter sets that are spread out uniformly across the input space.</li>
-<li>Emulators are built using the training data provided by step 1.</li>
+<li>Emulators are built using the training data (model inputs and outputs) provided by the model runs.</li>
 <li>Emulators are tested, to check whether they are good approximations of the model outputs.</li>
-<li>Emulators are evaluated at a large number of parameter sets. The implausibility of each of these is then assessed.
-Parameter sets classified as non-implausible will be used in the next wave of the process.</li>
+<li>Emulators are evaluated at a large number of parameter sets. The implausibility of each of these is then assessed, and the model run using parameter sets classified as non-implausible.</li>
 <li>The process is stopped or a new wave of the process is performed, going back to step 2.</li>
 </ol>
 <p>The table below associates each step of the process with the corresponding hmer function. Note that step 1 and 5 are not in the table, since they are specific to each model and calibration task. The last column of the table indicates what section of this workshop deals with each step of the process.</p>

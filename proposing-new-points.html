@@ -211,6 +211,12 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="proposing-new-points.html#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_wrap</span>(new_points, ranges)</span></code></pre></div>
 <p><img src="_main_files/figure-html/unnamed-chunk-30-1.png" style="display: block; margin: auto;" /></p>
 <p>Here we see which parameters are more or less constrained at the end of the first wave. For example, it seems clear that low values of <span class="math inline">\(\gamma\)</span> cannot produce a match (cf. penultimate column). We can also deduce relationships between parameters: <span class="math inline">\(\beta_1\)</span> and <span class="math inline">\(\epsilon\)</span> are an example of negatively-correlated parameters. If <span class="math inline">\(\beta_1\)</span> is large then <span class="math inline">\(\epsilon\)</span> needs to be small, and vice versa. Other parameters, such as <span class="math inline">\(\omega\)</span> or <span class="math inline">\(\mu\)</span>, are instead still spread out across their initial range.</p>
+<p>As shown in <a href="https://danny-sc.github.io/Tutorial_2/">Tutorial 2</a>, it is also possible to perform a full wave of emulation and history matching using the function <code>full_wave</code>, which needs the following information:</p>
+<ul>
+<li><p>A dataset that will be split by the function into training data and test data;</p></li>
+<li><p>A list of ranges for the parameters;</p></li>
+<li><p>The targets: for each of the model outputs to emulate, we need a pair (val, sigma) or (min, max) that will be used to evaluate implausibility.</p></li>
+</ul>
 </div>
             </section>
 

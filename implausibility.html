@@ -205,7 +205,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
             <section class="normal" id="section-">
 <div id="implausibility" class="section level1" number="6">
 <h1><span class="header-section-number">6</span> Implausibility</h1>
-<p>We quickly review the definition of implausibility measure. For a given model output and a given target, the implausibility measures the difference between the emulator output and the target, taking into account all sources of uncertainty. For a parameter set <span class="math inline">\(x\)</span>, the general form for the implausibility <span class="math inline">\(\text{Imp}(x)\)</span> is</p>
+<p>We will first briefly review the definition of implausibility measure. For a given model output and a given target, the implausibility measures the difference between the emulator output and the target, taking into account all sources of uncertainty. For a parameter set <span class="math inline">\(x\)</span>, the general form for the implausibility <span class="math inline">\(\text{Imp}(x)\)</span> is</p>
 <p><span class="math display">\[\text{Imp}(x) = \frac{|f(x)-z|}{\sqrt{V_0 + V_c(x)+V_s+V_m}},\]</span></p>
 <p>where <span class="math inline">\(f(x)\)</span> is the emulator output, <span class="math inline">\(z\)</span> the target, and the terms in the denominator refer to various forms of uncertainty. In particular</p>
 <ul>
@@ -214,7 +214,7 @@ code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warni
 <li><span class="math inline">\(V_s\)</span> is the ensemble variability and represents the stochastic nature of the model;</li>
 <li><span class="math inline">\(V_m\)</span> is the model discrepancy, accounting for possible mismatches between the model and reality.</li>
 </ul>
-<p>Since in this case study we want to emulate our model, without reference to a real-life analogue, the model represents the reality perfectly. For this reason we have <span class="math inline">\(V_m=0\)</span>. The term <span class="math inline">\(V_s\)</span>, which was zero when we worked on the deterministic SEIRS model (<a href="https://danny-sc.github.io/determ_workshop/index.html">Workshop 1</a>), is now different from zero, in order to account for the stochasticity of the model.</p>
+<p>Since in this case study we want to emulate our model, without reference to a real-life analogue, the model represents the reality perfectly. For this reason we have <span class="math inline">\(V_m=0\)</span>. The term <span class="math inline">\(V_s\)</span>, which was zero when we worked on the deterministic SEIRS model (<a href="https://danny-sc.github.io/determ_workshop/index.html">Workshop 1</a>), is now non-zero, in order to account for the stochasticity of the model.</p>
 <p>A very large value of <span class="math inline">\(\text{Imp}(x)\)</span> means that we can be confident that the parameter set <span class="math inline">\(x\)</span> does not provide a good match to the observed data, even factoring in the additional uncertainty that comes with the use of emulators.</p>
 <p>To plot the maximum implausibility (across all emulators), we set <code>plot_type</code> to <code>nimp</code> in the call to <code>emulator_plot</code>:</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="implausibility.html#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">emulator_plot</span>(stoch_emulators, <span class="at">plot_type =</span> <span class="st">&#39;nimp&#39;</span>, </span>
@@ -242,7 +242,7 @@ Solution
 <span id="cb23-2"><a href="implausibility.html#cb23-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">params =</span> <span class="fu">c</span>(<span class="st">&#39;epsilon&#39;</span>, <span class="st">&#39;alpha&#39;</span>),</span>
 <span id="cb23-3"><a href="implausibility.html#cb23-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">fixed_vals =</span> chosen_params[<span class="sc">!</span><span class="fu">names</span>(chosen_params) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&#39;epsilon&#39;</span>, <span class="st">&#39;alpha&#39;</span>)], </span>
 <span id="cb23-4"><a href="implausibility.html#cb23-4" aria-hidden="true" tabindex="-1"></a>              <span class="at">cb=</span>T) <span class="sc">+</span><span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span><span class="dv">1</span><span class="sc">/</span><span class="dv">7</span>, <span class="at">y=</span><span class="dv">1</span><span class="sc">/</span><span class="dv">50</span>), <span class="at">size=</span><span class="dv">3</span>)</span></code></pre></div>
-<img src="_main_files/figure-html/unnamed-chunk-50-1.png" style="display: block; margin: auto;" />
+<img src="_main_files/figure-html/unnamed-chunk-48-1.png" style="display: block; margin: auto;" />
 The plot shows what we expected: when <span class="math inline">\(\epsilon\)</span> and <span class="math inline">\(\alpha\)</span> are equal to their values in <code>chosen_params</code>, the implausibility measure is below the threshold <span class="math inline">\(3\)</span> (cf. black point in the box).
 </div>
 </div>
