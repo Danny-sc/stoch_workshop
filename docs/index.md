@@ -1202,8 +1202,8 @@ vd <- validation_diagnostics(bimodal_emulators, bimodal_targets, bimodal_all_val
 ```
 
 ```
-## Warning in fanny(suppressWarnings(daisy(v_outputs)), k = 2): the memberships are
-## all very close to 1/k. Maybe decrease 'memb.exp' ?
+## Warning in fanny(suppressWarnings(daisy(v_outputs)), k = 2): the memberships
+## are all very close to 1/k. Maybe decrease 'memb.exp' ?
 ```
 
 <img src="_main_files/figure-html/unnamed-chunk-57-1.png" style="display: block; margin: auto;" /><img src="_main_files/figure-html/unnamed-chunk-57-2.png" style="display: block; margin: auto;" /><img src="_main_files/figure-html/unnamed-chunk-57-3.png" style="display: block; margin: auto;" /><img src="_main_files/figure-html/unnamed-chunk-57-4.png" style="display: block; margin: auto;" /><img src="_main_files/figure-html/unnamed-chunk-57-5.png" style="display: block; margin: auto;" /><img src="_main_files/figure-html/unnamed-chunk-57-6.png" style="display: block; margin: auto;" /><img src="_main_files/figure-html/unnamed-chunk-57-7.png" style="display: block; margin: auto;" />

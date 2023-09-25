@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>11 Dealing with bimodality | Workshop 2: calibrating a stochastic model</title>
+  <meta name="description" content="An interactive introduction to the hmer package" />
+  <meta name="generator" content="bookdown 0.35 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="11 Dealing with bimodality | Workshop 2: calibrating a stochastic model" />
+  <meta property="og:type" content="book" />
+  
+  <meta property="og:description" content="An interactive introduction to the hmer package" />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="11 Dealing with bimodality | Workshop 2: calibrating a stochastic model" />
+  
+  <meta name="twitter:description" content="An interactive introduction to the hmer package" />
+  
+
+<meta name="author" content="Danny Scarponi, Andy Iskauskas" />
+
+
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="visualisation-of-the-non-implausible-space-by-wave.html"/>
+
+<script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6/dist/fuse.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+<link href="libs/anchor-sections-1.1.0/anchor-sections.css" rel="stylesheet" />
+<link href="libs/anchor-sections-1.1.0/anchor-sections-hash.css" rel="stylesheet" />
+<script src="libs/anchor-sections-1.1.0/anchor-sections.js"></script>
+<script language="javascript"> 
+    function toggle(id) {
+        var ele = document.getElementById("toggleText" + id);
+        var text = document.getElementById("displayText" + id);
+        var buttonText = text.innerHTML.replace("Show: ", "");
+        buttonText = buttonText.replace("Hide: ", "");
+        if(ele.style.display == "block") {
+            ele.style.display = "none";
+            text.innerHTML = "Show: " + buttonText;
+        } else {
+            ele.style.display = "block";
+            text.innerHTML = "Hide: " + buttonText;
+        }
+    } 
+</script>
+
+<script language="javascript">
+    function openCode(evt, codeName, id) {
+        var i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent" + id);
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks" + id);
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(codeName).style.display = "block";
+        evt.currentTarget.className += " active";
+    }
+</script>
+
+<script language="javascript">
+    function hide(id){
+        document.getElementById(id).style.display = "none";
+    }
+</script>
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+
+
+<style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  background-color: #f8f8f8; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ef2929; } /* Alert */
+code span.an { color: #8f5902; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #204a87; } /* Attribute */
+code span.bn { color: #0000cf; } /* BaseN */
+code span.cf { color: #204a87; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4e9a06; } /* Char */
+code span.cn { color: #8f5902; } /* Constant */
+code span.co { color: #8f5902; font-style: italic; } /* Comment */
+code span.cv { color: #8f5902; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #8f5902; font-weight: bold; font-style: italic; } /* Documentation */
+code span.dt { color: #204a87; } /* DataType */
+code span.dv { color: #0000cf; } /* DecVal */
+code span.er { color: #a40000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #0000cf; } /* Float */
+code span.fu { color: #204a87; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #8f5902; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #204a87; font-weight: bold; } /* Keyword */
+code span.op { color: #ce5c00; font-weight: bold; } /* Operator */
+code span.ot { color: #8f5902; } /* Other */
+code span.pp { color: #8f5902; font-style: italic; } /* Preprocessor */
+code span.sc { color: #ce5c00; font-weight: bold; } /* SpecialChar */
+code span.ss { color: #4e9a06; } /* SpecialString */
+code span.st { color: #4e9a06; } /* String */
+code span.va { color: #000000; } /* Variable */
+code span.vs { color: #4e9a06; } /* VerbatimString */
+code span.wa { color: #8f5902; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<style type="text/css">
+  
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Objectives</a></li>
+<li class="chapter" data-level="2" data-path="an-overview-of-history-matching-with-emulation-and-hmer.html"><a href="an-overview-of-history-matching-with-emulation-and-hmer.html"><i class="fa fa-check"></i><b>2</b> An overview of history matching with emulation and hmer</a></li>
+<li class="chapter" data-level="3" data-path="intro.html"><a href="intro.html"><i class="fa fa-check"></i><b>3</b> Introduction to the model</a></li>
+<li class="chapter" data-level="4" data-path="wave0---parameter-ranges-targets-and-design-points.html"><a href="wave0---parameter-ranges-targets-and-design-points.html"><i class="fa fa-check"></i><b>4</b> ‘wave0’ - parameter ranges, targets and design points</a></li>
+<li class="chapter" data-level="5" data-path="emulators.html"><a href="emulators.html"><i class="fa fa-check"></i><b>5</b> Emulators</a>
+<ul>
+<li class="chapter" data-level="5.1" data-path="emulators.html"><a href="emulators.html#brief-recap-on-the-structure-of-an-emulator"><i class="fa fa-check"></i><b>5.1</b> Brief recap on the structure of an emulator</a></li>
+<li class="chapter" data-level="5.2" data-path="emulators.html"><a href="emulators.html#stochastic-emulators"><i class="fa fa-check"></i><b>5.2</b> Stochastic emulators</a></li>
+</ul></li>
+<li class="chapter" data-level="6" data-path="implausibility.html"><a href="implausibility.html"><i class="fa fa-check"></i><b>6</b> Implausibility</a></li>
+<li class="chapter" data-level="7" data-path="emulator-diagnostics.html"><a href="emulator-diagnostics.html"><i class="fa fa-check"></i><b>7</b> Emulator diagnostics</a></li>
+<li class="chapter" data-level="8" data-path="propnewpoints.html"><a href="propnewpoints.html"><i class="fa fa-check"></i><b>8</b> Proposing new points</a></li>
+<li class="chapter" data-level="9" data-path="secondwave.html"><a href="secondwave.html"><i class="fa fa-check"></i><b>9</b> Second wave</a></li>
+<li class="chapter" data-level="10" data-path="visualisation-of-the-non-implausible-space-by-wave.html"><a href="visualisation-of-the-non-implausible-space-by-wave.html"><i class="fa fa-check"></i><b>10</b> Visualisation of the non-implausible space by wave</a></li>
+<li class="chapter" data-level="11" data-path="dealing-with-bimodality.html"><a href="dealing-with-bimodality.html"><i class="fa fa-check"></i><b>11</b> Dealing with bimodality</a>
+<ul>
+<li class="chapter" data-level="11.1" data-path="dealing-with-bimodality.html"><a href="dealing-with-bimodality.html#bimodal_wave0---design-points"><i class="fa fa-check"></i><b>11.1</b> ‘bimodal_wave0’ - design points</a></li>
+<li class="chapter" data-level="11.2" data-path="dealing-with-bimodality.html"><a href="dealing-with-bimodality.html#bimodal-emulators"><i class="fa fa-check"></i><b>11.2</b> Bimodal Emulators</a></li>
+<li class="chapter" data-level="11.3" data-path="dealing-with-bimodality.html"><a href="dealing-with-bimodality.html#implausibility-1"><i class="fa fa-check"></i><b>11.3</b> Implausibility</a></li>
+<li class="chapter" data-level="11.4" data-path="dealing-with-bimodality.html"><a href="dealing-with-bimodality.html#emulator-diagnostics-1"><i class="fa fa-check"></i><b>11.4</b> Emulator diagnostics</a></li>
+<li class="chapter" data-level="11.5" data-path="dealing-with-bimodality.html"><a href="dealing-with-bimodality.html#proposing-new-points"><i class="fa fa-check"></i><b>11.5</b> Proposing new points</a></li>
+</ul></li>
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">Workshop 2: calibrating a stochastic model</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="dealing-with-bimodality" class="section level1 hasAnchor" number="11">
+<h1><span class="header-section-number">11</span> Dealing with bimodality<a href="dealing-with-bimodality.html#dealing-with-bimodality" class="anchor-section" aria-label="Anchor link to header"></a></h1>
+<p>A video presentation of this section can be found <a href="https://www.youtube.com/watch?v=h9PVHHf459Q">here</a>.</p>
+<p>In the previous sections of this workshop we dealt with stochasticity, but not with bimodality, i.e. when one can perform multiple repetitions at a given parameter set and find two distinct classes of behaviour. This is because our SEIRS model did not show any bimodal behaviour in the outputs for the times considered, i.e. for <span class="math inline">\(t\)</span> up to <span class="math inline">\(200\)</span>. Let us suppose now that we are interested also in later times. Running the model on <code>chosen_params</code> using <code>get_results</code> up to time <span class="math inline">\(t=500\)</span> and plotting the results for “I” and “R” we obtain:</p>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="dealing-with-bimodality.html#cb36-1" tabindex="-1"></a>solution <span class="ot">&lt;-</span> <span class="fu">get_results</span>(chosen_params, <span class="at">outs =</span> <span class="fu">c</span>(<span class="st">&quot;I&quot;</span>, <span class="st">&quot;R&quot;</span>), </span>
+<span id="cb36-2"><a href="dealing-with-bimodality.html#cb36-2" tabindex="-1"></a>                        <span class="at">times =</span> <span class="fu">c</span>(<span class="dv">25</span>, <span class="dv">40</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">300</span>, <span class="dv">400</span>, <span class="dv">500</span>), <span class="at">raw =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb36-3"><a href="dealing-with-bimodality.html#cb36-3" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">500</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">700</span>), <span class="at">ty=</span><span class="st">&quot;n&quot;</span>, <span class="at">xlab =</span> <span class="st">&quot;Time&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Number&quot;</span>)</span>
+<span id="cb36-4"><a href="dealing-with-bimodality.html#cb36-4" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>) <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>) <span class="fu">lines</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">500</span>, solution[,j,i], <span class="at">col=</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>)[j<span class="dv">-2</span>], <span class="at">lwd=</span><span class="fl">0.3</span>)</span>
+<span id="cb36-5"><a href="dealing-with-bimodality.html#cb36-5" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&#39;topleft&#39;</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">&#39;Infected&#39;</span>, <span class="st">&quot;Recovered&quot;</span>), <span class="at">lty =</span> <span class="dv">1</span>, </span>
+<span id="cb36-6"><a href="dealing-with-bimodality.html#cb36-6" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>), <span class="at">inset =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.05</span>))</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-44-1.png" style="display: block; margin: auto;" /></p>
+<p>The most common example of bimodality, ‘take off vs die out’, now enters the picture: from time <span class="math inline">\(t=250\)</span> on, there are a large number of trajectories in green that have zero infected individuals (note the horizontal green line) and a few trajectories where transmission takes off again, producing a second wave of the epidemic (around <span class="math inline">\(t=300\)</span>).</p>
+<div class="panel panel-default">
+<div class="panel-heading">
+Task
+</div>
+<div class="panel-body">
+<p>Investigate how different parameter sets give rise to different levels of bimodality.</p>
+<p><infobutton id="displayTextunnamed-chunk-75" onclick="javascript:toggle('unnamed-chunk-75');">Show: R tip</infobutton></p>
+<div id="toggleTextunnamed-chunk-75" style="display: none">
+<div class="panel panel-default">
+<div class="panel-body">
+<p>Copy the code below, modify the value of (some) parameters and run it.</p>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="dealing-with-bimodality.html#cb37-1" tabindex="-1"></a>example_params <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb37-2"><a href="dealing-with-bimodality.html#cb37-2" tabindex="-1"></a>  <span class="at">b =</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">76</span><span class="sc">*</span><span class="dv">365</span>),  <span class="co"># birth rate</span></span>
+<span id="cb37-3"><a href="dealing-with-bimodality.html#cb37-3" tabindex="-1"></a>  <span class="at">mu =</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">76</span><span class="sc">*</span><span class="dv">365</span>),  <span class="co"># rate of death from other causes</span></span>
+<span id="cb37-4"><a href="dealing-with-bimodality.html#cb37-4" tabindex="-1"></a>  <span class="at">beta1 =</span> <span class="fl">0.214</span>, <span class="at">beta2 =</span> <span class="fl">0.107</span>, <span class="at">beta3 =</span> <span class="fl">0.428</span>,  <span class="co"># infection rate between each infectious and susceptible individual</span></span>
+<span id="cb37-5"><a href="dealing-with-bimodality.html#cb37-5" tabindex="-1"></a>  <span class="at">epsilon =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">7</span>,  <span class="co"># rate of becoming infectious after infection</span></span>
+<span id="cb37-6"><a href="dealing-with-bimodality.html#cb37-6" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">50</span>,  <span class="co"># rate of death from the disease</span></span>
+<span id="cb37-7"><a href="dealing-with-bimodality.html#cb37-7" tabindex="-1"></a>  <span class="at">gamma =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">14</span>,  <span class="co"># recovery rate</span></span>
+<span id="cb37-8"><a href="dealing-with-bimodality.html#cb37-8" tabindex="-1"></a>  <span class="at">omega =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">365</span>  <span class="co"># rate at which immunity is lost following recovery</span></span>
+<span id="cb37-9"><a href="dealing-with-bimodality.html#cb37-9" tabindex="-1"></a>)</span>
+<span id="cb37-10"><a href="dealing-with-bimodality.html#cb37-10" tabindex="-1"></a>solution <span class="ot">&lt;-</span> <span class="fu">get_results</span>(example_params, <span class="at">outs =</span> <span class="fu">c</span>(<span class="st">&quot;I&quot;</span>, <span class="st">&quot;R&quot;</span>), </span>
+<span id="cb37-11"><a href="dealing-with-bimodality.html#cb37-11" tabindex="-1"></a>                        <span class="at">times =</span> <span class="fu">c</span>(<span class="dv">25</span>, <span class="dv">40</span>, <span class="dv">100</span>, <span class="dv">200</span>), <span class="at">raw =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb37-12"><a href="dealing-with-bimodality.html#cb37-12" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">200</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">700</span>), <span class="at">ty=</span><span class="st">&quot;n&quot;</span>, <span class="at">xlab =</span> <span class="st">&quot;Time&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Number&quot;</span>)</span>
+<span id="cb37-13"><a href="dealing-with-bimodality.html#cb37-13" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>) <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>) <span class="fu">lines</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">200</span>, solution[,j,i], <span class="at">col=</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>)[j<span class="dv">-2</span>], <span class="at">lwd=</span><span class="fl">0.3</span>)</span>
+<span id="cb37-14"><a href="dealing-with-bimodality.html#cb37-14" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&#39;topleft&#39;</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">&#39;Infected&#39;</span>, <span class="st">&quot;Recovered&quot;</span>), <span class="at">lty =</span> <span class="dv">1</span>, </span>
+<span id="cb37-15"><a href="dealing-with-bimodality.html#cb37-15" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>), <span class="at">inset =</span> <span class="fu">c</span>(<span class="fl">0.05</span>, <span class="fl">0.05</span>))</span></code></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<button id="displayTextunnamed-chunk-46" onclick="javascript:toggle(&#39;unnamed-chunk-46&#39;);">
+Show: Solution
+</button>
+<div id="toggleTextunnamed-chunk-46" style="display: none">
+<div class="panel panel-default">
+<div class="panel-heading panel-heading1">
+Solution
+</div>
+<div class="panel-body">
+<p>Let us see what happens when we simulate a higher rate of infection between each infectious and susceptible:</p>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="dealing-with-bimodality.html#cb38-1" tabindex="-1"></a>higher_beta_params <span class="ot">&lt;-</span> <span class="fu">c</span>(</span>
+<span id="cb38-2"><a href="dealing-with-bimodality.html#cb38-2" tabindex="-1"></a>  <span class="at">b =</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">76</span><span class="sc">*</span><span class="dv">365</span>),</span>
+<span id="cb38-3"><a href="dealing-with-bimodality.html#cb38-3" tabindex="-1"></a>  <span class="at">mu =</span> <span class="dv">1</span><span class="sc">/</span>(<span class="dv">76</span><span class="sc">*</span><span class="dv">365</span>),</span>
+<span id="cb38-4"><a href="dealing-with-bimodality.html#cb38-4" tabindex="-1"></a>  <span class="at">beta1 =</span> <span class="fl">0.3</span>, <span class="at">beta2 =</span> <span class="fl">0.1</span>, <span class="at">beta3 =</span> <span class="fl">0.5</span>,</span>
+<span id="cb38-5"><a href="dealing-with-bimodality.html#cb38-5" tabindex="-1"></a>  <span class="at">sigma =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">7</span>,</span>
+<span id="cb38-6"><a href="dealing-with-bimodality.html#cb38-6" tabindex="-1"></a>  <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">50</span>,</span>
+<span id="cb38-7"><a href="dealing-with-bimodality.html#cb38-7" tabindex="-1"></a>  <span class="at">gamma =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">14</span>,</span>
+<span id="cb38-8"><a href="dealing-with-bimodality.html#cb38-8" tabindex="-1"></a>  <span class="at">omega =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">365</span></span>
+<span id="cb38-9"><a href="dealing-with-bimodality.html#cb38-9" tabindex="-1"></a>)</span>
+<span id="cb38-10"><a href="dealing-with-bimodality.html#cb38-10" tabindex="-1"></a>higher_beta_solution <span class="ot">&lt;-</span> <span class="fu">get_results</span>(higher_beta_params, <span class="at">outs =</span> <span class="fu">c</span>(<span class="st">&quot;I&quot;</span>, <span class="st">&quot;R&quot;</span>), </span>
+<span id="cb38-11"><a href="dealing-with-bimodality.html#cb38-11" tabindex="-1"></a>                        <span class="at">times =</span> <span class="fu">c</span>(<span class="dv">25</span>, <span class="dv">40</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">300</span>, <span class="dv">400</span>, <span class="dv">500</span>), <span class="at">raw =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb38-12"><a href="dealing-with-bimodality.html#cb38-12" tabindex="-1"></a><span class="fu">plot</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">500</span>, <span class="at">ylim=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">700</span>), <span class="at">ty=</span><span class="st">&quot;n&quot;</span>, <span class="at">xlab =</span> <span class="st">&quot;Time&quot;</span>, <span class="at">ylab =</span> <span class="st">&quot;Number&quot;</span>)</span>
+<span id="cb38-13"><a href="dealing-with-bimodality.html#cb38-13" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>) <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>) <span class="fu">lines</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">500</span>, solution[,j,i], <span class="at">col=</span>(<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>)[j<span class="dv">-2</span>], <span class="at">lwd=</span><span class="fl">0.3</span>)</span>
+<span id="cb38-14"><a href="dealing-with-bimodality.html#cb38-14" tabindex="-1"></a><span class="cf">for</span>(j <span class="cf">in</span> <span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>) <span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>) <span class="fu">lines</span>(<span class="dv">0</span><span class="sc">:</span><span class="dv">500</span>, higher_beta_solution[,j,i], </span>
+<span id="cb38-15"><a href="dealing-with-bimodality.html#cb38-15" tabindex="-1"></a>                                    <span class="at">col=</span>(<span class="fu">c</span>(<span class="st">&quot;#E69F00&quot;</span>,<span class="st">&quot;#CC79A7&quot;</span>))[j<span class="dv">-2</span>], <span class="at">lwd=</span><span class="fl">0.3</span>)</span>
+<span id="cb38-16"><a href="dealing-with-bimodality.html#cb38-16" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">&#39;topleft&#39;</span>, <span class="at">legend =</span> <span class="fu">c</span>(<span class="st">&#39;Infected&#39;</span>, <span class="st">&quot;Recovered&quot;</span>, <span class="st">&quot;Infected - higher beta&quot;</span>, </span>
+<span id="cb38-17"><a href="dealing-with-bimodality.html#cb38-17" tabindex="-1"></a>                             <span class="st">&quot;Recovered - higher beta&quot;</span>), <span class="at">lty =</span> <span class="dv">1</span>, </span>
+<span id="cb38-18"><a href="dealing-with-bimodality.html#cb38-18" tabindex="-1"></a>       <span class="at">col =</span> <span class="fu">c</span>(<span class="dv">3</span>,<span class="dv">4</span>,<span class="st">&quot;#E69F00&quot;</span>,<span class="st">&quot;#CC79A7&quot;</span>), <span class="at">inset =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.01</span>))</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-77-1.png" style="display: block; margin: auto;" /></p>
+We see that the peaks of recovered and infectious individuals during the first wave have now increased, as expected. Also note how increasing the transmission rate reduced the role of bimodality (very few trajectories in orange take off after the first wave): the fact that more individuals get now infected during the first wave (around <span class="math inline">\(t=50\)</span>), makes the chances of a second “wave” around time <span class="math inline">\(t=300\)</span> lower.
+</div>
+</div>
+</div>
+<p>In the following subsections we will describe how to deal with bimodality when performing history matching with emulation. Since most parts of the process are very similar to what we have seen already for stochastic models, we will only discuss the areas where the process changes.</p>
+<div class="panel panel-default">
+<div class="panel-body">
+Similar to the philosophy of the previous sections, we will match the observed data to the mean within each of the two modes. This can be used to then exclude a large portion of the input space without resorting to modelling the specific distributional form of the model output. In later workshops we will also learn to match to the set of possible realisations of a stochastic model, by emulating its covariance structure.
+</div>
+</div>
+<div id="bimodal_wave0---design-points" class="section level2 hasAnchor" number="11.1">
+<h2><span class="header-section-number">11.1</span> ‘bimodal_wave0’ - design points<a href="dealing-with-bimodality.html#bimodal_wave0---design-points" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>While the parameters’ ranges are the same as before, we need to redefine the targets’ list, adding values for times later than <span class="math inline">\(t=200\)</span>:</p>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="dealing-with-bimodality.html#cb39-1" tabindex="-1"></a>bimodal_targets <span class="ot">&lt;-</span> <span class="fu">list</span>(</span>
+<span id="cb39-2"><a href="dealing-with-bimodality.html#cb39-2" tabindex="-1"></a>  <span class="at">I25 =</span> <span class="fu">list</span>(<span class="at">val =</span> <span class="fl">115.88</span>, <span class="at">sigma =</span> <span class="fl">5.79</span>),</span>
+<span id="cb39-3"><a href="dealing-with-bimodality.html#cb39-3" tabindex="-1"></a>  <span class="at">I40 =</span> <span class="fu">list</span>(<span class="at">val =</span> <span class="fl">137.84</span>, <span class="at">sigma =</span> <span class="fl">6.89</span>),</span>
+<span id="cb39-4"><a href="dealing-with-bimodality.html#cb39-4" tabindex="-1"></a>  <span class="at">I100 =</span> <span class="fu">list</span>(<span class="at">val =</span> <span class="fl">26.34</span>, <span class="at">sigma =</span> <span class="fl">1.317</span>),</span>
+<span id="cb39-5"><a href="dealing-with-bimodality.html#cb39-5" tabindex="-1"></a>  <span class="at">I200 =</span> <span class="fu">list</span>(<span class="at">val =</span> <span class="fl">0.68</span>, <span class="at">sigma =</span> <span class="fl">0.034</span>),</span>
+<span id="cb39-6"><a href="dealing-with-bimodality.html#cb39-6" tabindex="-1"></a>  <span class="at">I250 =</span> <span class="fu">list</span>(<span class="at">val =</span> <span class="fl">9.67</span>, <span class="at">sigma =</span> <span class="fl">4.76</span>),</span>
+<span id="cb39-7"><a href="dealing-with-bimodality.html#cb39-7" tabindex="-1"></a>  <span class="at">I400 =</span> <span class="fu">list</span>(<span class="at">val =</span> <span class="fl">15.67</span>, <span class="at">sigma =</span> <span class="fl">5.36</span>),</span>
+<span id="cb39-8"><a href="dealing-with-bimodality.html#cb39-8" tabindex="-1"></a>  <span class="at">I500 =</span> <span class="fu">list</span>(<span class="at">val =</span> <span class="fl">14.45</span>, <span class="at">sigma =</span> <span class="fl">5.32</span>),</span>
+<span id="cb39-9"><a href="dealing-with-bimodality.html#cb39-9" tabindex="-1"></a>  <span class="at">R25 =</span> <span class="fu">list</span>(<span class="at">val =</span> <span class="fl">125.12</span>, <span class="at">sigma =</span> <span class="fl">6.26</span>),</span>
+<span id="cb39-10"><a href="dealing-with-bimodality.html#cb39-10" tabindex="-1"></a>  <span class="at">R40 =</span> <span class="fu">list</span>(<span class="at">val =</span> <span class="fl">256.80</span>, <span class="at">sigma =</span> <span class="fl">12.84</span>),</span>
+<span id="cb39-11"><a href="dealing-with-bimodality.html#cb39-11" tabindex="-1"></a>  <span class="at">R100 =</span> <span class="fu">list</span>(<span class="at">val =</span> <span class="fl">538.99</span>, <span class="at">sigma =</span> <span class="fl">26.95</span>),</span>
+<span id="cb39-12"><a href="dealing-with-bimodality.html#cb39-12" tabindex="-1"></a>  <span class="at">R200 =</span> <span class="fu">list</span>(<span class="at">val =</span> <span class="fl">444.23</span>, <span class="at">sigma =</span> <span class="fl">22.21</span>),</span>
+<span id="cb39-13"><a href="dealing-with-bimodality.html#cb39-13" tabindex="-1"></a>  <span class="at">R250 =</span> <span class="fu">list</span>(<span class="at">val =</span> <span class="fl">361.08</span>, <span class="at">sigma =</span> <span class="fl">25.85</span>),</span>
+<span id="cb39-14"><a href="dealing-with-bimodality.html#cb39-14" tabindex="-1"></a>  <span class="at">R400 =</span> <span class="fu">list</span>(<span class="at">val =</span> <span class="fl">569.39</span>, <span class="at">sigma =</span> <span class="fl">26.52</span>),</span>
+<span id="cb39-15"><a href="dealing-with-bimodality.html#cb39-15" tabindex="-1"></a>  <span class="at">R500 =</span> <span class="fu">list</span>(<span class="at">val =</span> <span class="fl">508.64</span>, <span class="at">sigma =</span> <span class="fl">28.34</span>)</span>
+<span id="cb39-16"><a href="dealing-with-bimodality.html#cb39-16" tabindex="-1"></a>)</span></code></pre></div>
+<p>Note that these are the same exact targets chosen for the deterministic workshop, <a href="https://danny-sc.github.io/determ_workshop/index.html">Workshop 1</a>.</p>
+<p>Since we are now interested in times after <span class="math inline">\(t=200\)</span> too, we need to rerun the parameter sets in <code>initial_points</code>, obtaining <code>bimodal_initial_results</code>. We then bind all elements in <code>bimodal_initial_results</code> to obtain a dataframe <code>bimodal_wave0</code>, which we split into a training and a validation set:</p>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="dealing-with-bimodality.html#cb40-1" tabindex="-1"></a>bimodal_initial_results <span class="ot">&lt;-</span> <span class="fu">list</span>()</span>
+<span id="cb40-2"><a href="dealing-with-bimodality.html#cb40-2" tabindex="-1"></a><span class="fu">with_progress</span>({</span>
+<span id="cb40-3"><a href="dealing-with-bimodality.html#cb40-3" tabindex="-1"></a>  p <span class="ot">&lt;-</span> <span class="fu">progressor</span>(<span class="fu">nrow</span>(initial_points))</span>
+<span id="cb40-4"><a href="dealing-with-bimodality.html#cb40-4" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(initial_points)) {</span>
+<span id="cb40-5"><a href="dealing-with-bimodality.html#cb40-5" tabindex="-1"></a>  model_out <span class="ot">&lt;-</span> <span class="fu">get_results</span>(<span class="fu">unlist</span>(initial_points[i,]), <span class="at">nreps =</span> <span class="dv">50</span>, <span class="at">outs =</span> <span class="fu">c</span>(<span class="st">&quot;I&quot;</span>, <span class="st">&quot;R&quot;</span>), </span>
+<span id="cb40-6"><a href="dealing-with-bimodality.html#cb40-6" tabindex="-1"></a>                           <span class="at">times =</span> <span class="fu">c</span>(<span class="dv">25</span>, <span class="dv">40</span>, <span class="dv">100</span>, <span class="dv">200</span>, <span class="dv">250</span>, <span class="dv">400</span>, <span class="dv">500</span>))</span>
+<span id="cb40-7"><a href="dealing-with-bimodality.html#cb40-7" tabindex="-1"></a>  bimodal_initial_results[[i]] <span class="ot">&lt;-</span> model_out</span>
+<span id="cb40-8"><a href="dealing-with-bimodality.html#cb40-8" tabindex="-1"></a>  <span class="fu">p</span>(<span class="at">message =</span> <span class="fu">sprintf</span>(<span class="st">&quot;Run %g&quot;</span>, i))</span>
+<span id="cb40-9"><a href="dealing-with-bimodality.html#cb40-9" tabindex="-1"></a>}</span>
+<span id="cb40-10"><a href="dealing-with-bimodality.html#cb40-10" tabindex="-1"></a>})</span>
+<span id="cb40-11"><a href="dealing-with-bimodality.html#cb40-11" tabindex="-1"></a>bimodal_wave0 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="fu">do.call</span>(<span class="st">&#39;rbind&#39;</span>, bimodal_initial_results))</span>
+<span id="cb40-12"><a href="dealing-with-bimodality.html#cb40-12" tabindex="-1"></a>bimodal_all_training <span class="ot">&lt;-</span> bimodal_wave0[<span class="dv">1</span><span class="sc">:</span><span class="dv">5000</span>,]</span>
+<span id="cb40-13"><a href="dealing-with-bimodality.html#cb40-13" tabindex="-1"></a>bimodal_all_valid <span class="ot">&lt;-</span> bimodal_wave0[<span class="dv">5001</span><span class="sc">:</span><span class="dv">7500</span>,]</span>
+<span id="cb40-14"><a href="dealing-with-bimodality.html#cb40-14" tabindex="-1"></a>bimodal_output_names <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&quot;I25&quot;</span>, <span class="st">&quot;I40&quot;</span>, <span class="st">&quot;I100&quot;</span>, <span class="st">&quot;I200&quot;</span>, <span class="st">&quot;I250&quot;</span>, <span class="st">&quot;I400&quot;</span>, <span class="st">&quot;I500&quot;</span>, </span>
+<span id="cb40-15"><a href="dealing-with-bimodality.html#cb40-15" tabindex="-1"></a>                          <span class="st">&quot;R25&quot;</span>, <span class="st">&quot;R40&quot;</span>, <span class="st">&quot;R100&quot;</span>, <span class="st">&quot;R200&quot;</span>, <span class="st">&quot;R250&quot;</span>, <span class="st">&quot;R400&quot;</span>, <span class="st">&quot;R500&quot;</span>)</span></code></pre></div>
+</div>
+<div id="bimodal-emulators" class="section level2 hasAnchor" number="11.2">
+<h2><span class="header-section-number">11.2</span> Bimodal Emulators<a href="dealing-with-bimodality.html#bimodal-emulators" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="panel panel-default">
+<div class="panel-body">
+<p>To train bimodal emulators we use the function <code>emulator_from_data</code> specifying <code>emulator_type = 'multistate'</code>, which requires the training data, the names of the outputs to emulate, and the ranges of the parameters:</p>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="dealing-with-bimodality.html#cb41-1" tabindex="-1"></a>bimodal_emulators <span class="ot">&lt;-</span> <span class="fu">emulator_from_data</span>(bimodal_all_training, </span>
+<span id="cb41-2"><a href="dealing-with-bimodality.html#cb41-2" tabindex="-1"></a>                                        bimodal_output_names, ranges,</span>
+<span id="cb41-3"><a href="dealing-with-bimodality.html#cb41-3" tabindex="-1"></a>                                        <span class="at">emulator_type =</span> <span class="st">&#39;multistate&#39;</span>)</span></code></pre></div>
+<p>Behind the scenes, this function does the following:</p>
+<ul>
+<li><p>First it looks at the provided training data and identifies which of the outputs are bimodal (see box below if interested in the method used to identify bimodal outputs).</p></li>
+<li><p>For the outputs where bimodality is found, the repetitions at each parameter set are clustered into two subsets, based on the mode they belong to.</p></li>
+<li><p>For outputs without bimodality, stochastic emulators are trained as before. For outputs with bimodality, variance and mean emulators are trained separately for each of the two modes. To access the mean emulators for the first mode, we type <code>bimodal_emulators$mode1$expectation</code>, and to access the variance emulators for the second mode we type <code>bimodal_emulators$mode2$variance</code>.</p></li>
+<li><p>Finally, an emulator for the proportion of points in each mode is also trained (this is a single emulator, as in the deterministic case). This emulator can be accessed by typing <code>bimodal_emulators$prop</code> and will be referred to as proportion emulator.</p></li>
+</ul>
+<p>Let us now plot the expectation of the mean emulator of <span class="math inline">\(R400\)</span> for each mode fixing all non-shown parameters to their values in <code>chosen_params</code>:</p>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="dealing-with-bimodality.html#cb42-1" tabindex="-1"></a><span class="fu">emulator_plot</span>(bimodal_emulators<span class="sc">$</span>mode1<span class="sc">$</span>expectation<span class="sc">$</span>R400, <span class="at">params =</span> <span class="fu">c</span>(<span class="st">&#39;mu&#39;</span>, <span class="st">&#39;alpha&#39;</span>), </span>
+<span id="cb42-2"><a href="dealing-with-bimodality.html#cb42-2" tabindex="-1"></a>              <span class="at">fixed_vals =</span> chosen_params[<span class="sc">!</span><span class="fu">names</span>(chosen_params) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&#39;mu&#39;</span>, <span class="st">&#39;alpha&#39;</span>)])</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-79-1.png" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="dealing-with-bimodality.html#cb43-1" tabindex="-1"></a><span class="fu">emulator_plot</span>(bimodal_emulators<span class="sc">$</span>mode2<span class="sc">$</span>expectation<span class="sc">$</span>R400, <span class="at">params =</span> <span class="fu">c</span>(<span class="st">&#39;mu&#39;</span>, <span class="st">&#39;alpha&#39;</span>), </span>
+<span id="cb43-2"><a href="dealing-with-bimodality.html#cb43-2" tabindex="-1"></a>              <span class="at">fixed_vals =</span> chosen_params[<span class="sc">!</span><span class="fu">names</span>(chosen_params) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&#39;mu&#39;</span>, <span class="st">&#39;alpha&#39;</span>)])</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-79-2.png" style="display: block; margin: auto;" /></p>
+<p>We notice that mode 2 tends to contain higher values than mode 1. This indicates that mode 1 is the one where the infection dies out.</p>
+<p>It is also instructive to plot the expectation of the proportion emulator. We use the argument <code>fixed_vals</code> to set the parameters that are not shown in the plot to be as in <code>chosen_params</code>:</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="dealing-with-bimodality.html#cb44-1" tabindex="-1"></a><span class="fu">emulator_plot</span>(bimodal_emulators<span class="sc">$</span>prop, <span class="at">params =</span> <span class="fu">c</span>(<span class="st">&#39;alpha&#39;</span>, <span class="st">&#39;epsilon&#39;</span>), </span>
+<span id="cb44-2"><a href="dealing-with-bimodality.html#cb44-2" tabindex="-1"></a>              <span class="at">fixed_vals =</span> chosen_params[<span class="sc">!</span><span class="fu">names</span>(chosen_params) <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">&#39;alpha&#39;</span> ,<span class="st">&#39;epsilon&#39;</span>)]) <span class="sc">+</span></span>
+<span id="cb44-3"><a href="dealing-with-bimodality.html#cb44-3" tabindex="-1"></a>              <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">x=</span><span class="dv">1</span><span class="sc">/</span><span class="dv">7</span>, <span class="at">y=</span><span class="dv">1</span><span class="sc">/</span><span class="dv">50</span>), <span class="at">size=</span><span class="dv">3</span>)</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-80-1.png" style="display: block; margin: auto;" /></p>
+The plot shows that the proportion of points in mode 1, where the infection dies out, is around 0.58. This is in accordance with the plot produced at the beginning of this section, where the infection died out on the majority of trajectories.
+</div>
+</div>
+<p><infobutton id="displayTextunnamed-chunk-51" onclick="javascript:toggle('unnamed-chunk-51');">Show: How are bimodal outputs identified?</infobutton></p>
+<div id="toggleTextunnamed-chunk-51" style="display: none">
+<div class="panel panel-default">
+<div class="panel-body">
+<p>Suppose we are given a dataframe containing parameter sets (with repetitions) and the corresponding outputs. An individual row of that dataframe would be of the form <span class="math inline">\((x, y) = (x_1, x_2, x_3, …, x_p, y_1, y_2, … y_n)\)</span> where <span class="math inline">\(x\)</span> are the paramters and <span class="math inline">\(y\)</span> the outputs. To check and classify bimodality we follow the steps below:</p>
+<ol style="list-style-type: decimal">
+<li><p>We split the dataframe into unique parameter sets, collecting repetitions for each parameter set together. For each unique parameter set <span class="math inline">\(\bar{x}\)</span> and each <span class="math inline">\(i=1,...,n\)</span>, we use clustering on <span class="math inline">\(y_i\)</span> (with finite normal <a href="https://en.wikipedia.org/wiki/Mixture_model">mixture models</a>), allowing a maximum of two clusters. If the optimal clustering has two clusters, we consider the output <span class="math inline">\(y_i\)</span> to be bimodal at <span class="math inline">\(\bar{x}\)</span>; otherwise we consider it unimodal.</p></li>
+<li><p>If for all parameter sets and all outputs, the optimal clustering is a single cluster, then we have no bimodality: we then perform stochastic emulation using <code>emulator_from_data</code> with <code>emulator_type = 'variance'</code>. Otherwise, for each output <span class="math inline">\(y_i\)</span> and each unique parameter set <span class="math inline">\(\bar{x}\)</span>:</p>
+<p>2.1. If there is no bimodality in <span class="math inline">\(y_i\)</span> for <span class="math inline">\(\bar{x}\)</span>, then all the data from <span class="math inline">\(\bar{x}\)</span> for <span class="math inline">\(y_i\)</span> will be used in each mode.</p>
+<p>2.2. If there is bimodality in <span class="math inline">\(y_i\)</span> for <span class="math inline">\(\bar{x}\)</span>, then we determine which of the repetitions in the parameter set <span class="math inline">\(\bar{x}\)</span> correspond to the identified bimodality (again, using clustering). The dataset for that parameter set <span class="math inline">\(\bar{x}\)</span> gets split into two: one for each mode.</p></li>
+<li><p>We collate the data for each mode, resulting in (for each output) two dataframes of repetitions. Note that it is unlikely that each mode gets the same number of repetitions to train to.</p></li>
+<li><p>For each mode, we train a list of emulators (one for each output) using the data appropriate to that mode.
+Note that there is a slight redundancy here, in that if there was no bimodality in an output for any parameter choices, then we have essentially trained the same emulator twice.</p></li>
+</ol>
+<p>The process described above is schematically represented in the figure below:</p>
+<img src="Bimodality_detection.png" width="1698" style="display: block; margin: auto;" />
+</div>
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+Task
+</div>
+<div class="panel-body">
+Confirm that mode 1 is where the infection dies out by comparing the plots of the expectation of the mean emulator for <span class="math inline">\(I400\)</span> for both modes.
+</div>
+</div>
+<button id="displayTextunnamed-chunk-53" onclick="javascript:toggle(&#39;unnamed-chunk-53&#39;);">
+Show: Solution
+</button>
+<div id="toggleTextunnamed-chunk-53" style="display: none">
+<div class="panel panel-default">
+<div class="panel-heading panel-heading1">
+Solution
+</div>
+<div class="panel-body">
+<p>We use <code>emulator_plot</code> to produce the suggested plots:</p>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="dealing-with-bimodality.html#cb45-1" tabindex="-1"></a><span class="fu">emulator_plot</span>(bimodal_emulators<span class="sc">$</span>mode1<span class="sc">$</span>expectation<span class="sc">$</span>I400, <span class="at">params =</span> <span class="fu">c</span>(<span class="st">&#39;mu&#39;</span>, <span class="st">&#39;alpha&#39;</span>))</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-82-1.png" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="dealing-with-bimodality.html#cb46-1" tabindex="-1"></a><span class="fu">emulator_plot</span>(bimodal_emulators<span class="sc">$</span>mode2<span class="sc">$</span>expectation<span class="sc">$</span>I400, <span class="at">params =</span> <span class="fu">c</span>(<span class="st">&#39;mu&#39;</span>, <span class="st">&#39;alpha&#39;</span>))</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-82-2.png" style="display: block; margin: auto;" /></p>
+The values in the plot for mode 1 are lower than those for mode 2: this reflects the fact that mode 2 experiences a second wave around <span class="math inline">\(t=300\)</span>, while in mode 1 the infection dies out after the first wave (around <span class="math inline">\(t=40\)</span>).
+</div>
+</div>
+</div>
+</div>
+<div id="implausibility-1" class="section level2 hasAnchor" number="11.3">
+<h2><span class="header-section-number">11.3</span> Implausibility<a href="dealing-with-bimodality.html#implausibility-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<div class="panel panel-default">
+<div class="panel-body">
+<p>Since we are now in a bimodal setting, we want to regard a point as non-implausible for a given target if it is valid with respect to either mode. This is the default behaviour of the package, when dealing with bimodal emulators.</p>
+<p>For a given output and a given point, the implausibility for mode 1 and the implausibility for mode 2 are calculated, and the minimum of them is taken. The maximum (or second-maximum, third-maximum etc) of this collection of minimised implausibilities is then selected, depending on the user choice. For example, to plot the maximum of these minimised implausibilities, we set <code>plot_type</code> to <code>nimp</code>:</p>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="dealing-with-bimodality.html#cb47-1" tabindex="-1"></a><span class="fu">emulator_plot</span>(bimodal_emulators, <span class="at">plot_type =</span> <span class="st">&#39;nimp&#39;</span>, <span class="at">targets =</span> bimodal_targets, </span>
+<span id="cb47-2"><a href="dealing-with-bimodality.html#cb47-2" tabindex="-1"></a>              <span class="at">params =</span> <span class="fu">c</span>(<span class="st">&#39;alpha&#39;</span>, <span class="st">&#39;epsilon&#39;</span>))</span></code></pre></div>
+<img src="_main_files/figure-html/unnamed-chunk-83-1.png" style="display: block; margin: auto;" />
+</div>
+</div>
+<div class="panel panel-default">
+<div class="panel-heading">
+Task
+</div>
+<div class="panel-body">
+Set the argument <code>plot_type</code> to <code>imp</code> to produce implausibility plots for each output, for mode 1 and mode 2. Which implausibility plots are the same for each mode, and which are different? Why?
+</div>
+</div>
+<button id="displayTextunnamed-chunk-56" onclick="javascript:toggle(&#39;unnamed-chunk-56&#39;);">
+Show: Solution
+</button>
+<div id="toggleTextunnamed-chunk-56" style="display: none">
+<div class="panel panel-default">
+<div class="panel-heading panel-heading1">
+Solution
+</div>
+<div class="panel-body">
+<p>Setting <code>plot_type='imp'</code> in <code>emulator_plot</code> and passing it either <code>subset_emulators(bimodal_emulators, output_names[-c(7,14)])$mode1</code> or <code>subset_emulators(bimodal_emulators, output_names[-c(7,14)])$mode2</code>, we get:</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="dealing-with-bimodality.html#cb48-1" tabindex="-1"></a><span class="fu">emulator_plot</span>(bimodal_emulators<span class="sc">$</span>mode1, <span class="at">plot_type =</span> <span class="st">&#39;imp&#39;</span>, </span>
+<span id="cb48-2"><a href="dealing-with-bimodality.html#cb48-2" tabindex="-1"></a>              <span class="at">targets =</span> bimodal_targets, <span class="at">params =</span> <span class="fu">c</span>(<span class="st">&#39;omega&#39;</span>, <span class="st">&#39;epsilon&#39;</span>))</span></code></pre></div>
+<p><img src="_main_files/figure-html/unnamed-chunk-84-1.png" style="display: block; margin: auto;" /></p>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="dealing-with-bimodality.html#cb49-1" tabindex="-1"></a><span class="fu">emulator_plot</span>(bimodal_emulators<span class="sc">$</span>mode2, <span class="at">plot_type =</span> <span class="st">&#39;imp&#39;</span>, </span>
+<span id="cb49-2"><a href="dealing-with-bimodality.html#cb49-2" tabindex="-1"></a>              <span class="at">targets =</span> bimodal_targets, <span class="at">params =</span> <span class="fu">c</span>(<span class="st">&#39;omega&#39;</span>, <span class="st">&#39;epsilon&#39;</span>))</span></code></pre></div>
+<img src="_main_files/figure-html/unnamed-chunk-84-2.png" style="display: block; margin: auto;" />
+The implausibility plots are the same between modes for early times (<span class="math inline">\(t=25,40,100\)</span>) and different between modes for later outputs. This makes sense, since bimodality, which enters the picture after the first wave, does not play a role in earlier times.
+</div>
+</div>
+</div>
+</div>
+<div id="emulator-diagnostics-1" class="section level2 hasAnchor" number="11.4">
+<h2><span class="header-section-number">11.4</span> Emulator diagnostics<a href="dealing-with-bimodality.html#emulator-diagnostics-1" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>As before, the function <code>validation_diagnostics</code> can be used to get three diagnostics for each emulated output. For example, to produce diagnostics for the first four emulators we type:</p>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="dealing-with-bimodality.html#cb50-1" tabindex="-1"></a>vd <span class="ot">&lt;-</span> <span class="fu">validation_diagnostics</span>(bimodal_emulators, bimodal_targets, bimodal_all_valid, </span>
+<span id="cb50-2"><a href="dealing-with-bimodality.html#cb50-2" tabindex="-1"></a>                             <span class="at">plt=</span><span class="cn">TRUE</span>, <span class="at">row=</span><span class="dv">2</span>)</span></code></pre></div>
+<pre><code>## Warning in fanny(suppressWarnings(daisy(v_outputs)), k = 2): the memberships
+## are all very close to 1/k. Maybe decrease &#39;memb.exp&#39; ?</code></pre>
+<p><img src="_main_files/figure-html/unnamed-chunk-57-1.png" style="display: block; margin: auto;" /><img src="_main_files/figure-html/unnamed-chunk-57-2.png" style="display: block; margin: auto;" /><img src="_main_files/figure-html/unnamed-chunk-57-3.png" style="display: block; margin: auto;" /><img src="_main_files/figure-html/unnamed-chunk-57-4.png" style="display: block; margin: auto;" /><img src="_main_files/figure-html/unnamed-chunk-57-5.png" style="display: block; margin: auto;" /><img src="_main_files/figure-html/unnamed-chunk-57-6.png" style="display: block; margin: auto;" /><img src="_main_files/figure-html/unnamed-chunk-57-7.png" style="display: block; margin: auto;" /></p>
+<div class="panel panel-default">
+<div class="panel-body">
+You may have noticed that in the first column we have more points plotted than we have validation points. This is because we do diagnostics for each mode for each output, i.e. we compare the predictions of the mean emulators for mode 1 and mode 2 with the model output values, which are also clustered in two subsets, due to bimodality.
+</div>
+</div>
+<p>As in the deterministic case, one can enlarge the <span class="math inline">\(\sigma\)</span> values to obtain more conservative emulators, if needed. For example, to double the <span class="math inline">\(\sigma\)</span> value for the mean emulators for <span class="math inline">\(I500\)</span> in both modes we would type:</p>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="dealing-with-bimodality.html#cb52-1" tabindex="-1"></a>bimodal_emulators<span class="sc">$</span>mode1<span class="sc">$</span>expectation<span class="sc">$</span>I500 <span class="ot">&lt;-</span> bimodal_emulators<span class="sc">$</span>mode1<span class="sc">$</span>expectation<span class="sc">$</span>I500<span class="sc">$</span><span class="fu">mult_sigma</span>(<span class="dv">2</span>)</span>
+<span id="cb52-2"><a href="dealing-with-bimodality.html#cb52-2" tabindex="-1"></a>bimodal_emulators<span class="sc">$</span>mode2<span class="sc">$</span>expectation<span class="sc">$</span>I500 <span class="ot">&lt;-</span> bimodal_emulators<span class="sc">$</span>mode2<span class="sc">$</span>expectation<span class="sc">$</span>I500<span class="sc">$</span><span class="fu">mult_sigma</span>(<span class="dv">2</span>)</span></code></pre></div>
+</div>
+<div id="proposing-new-points" class="section level2 hasAnchor" number="11.5">
+<h2><span class="header-section-number">11.5</span> Proposing new points<a href="dealing-with-bimodality.html#proposing-new-points" class="anchor-section" aria-label="Anchor link to header"></a></h2>
+<p>Generating a set of non-implausible points, based on the trained emulators, is done in exactly the same way as it was in Section <a href="propnewpoints.html#propnewpoints">8</a>, using the function <code>generate_new_design</code>. In this case we need to use the function <code>subset_emulators</code> to remove the emulators for the outputs at <span class="math inline">\(t=450\)</span> (the seventh and fourteenth emulators), for which we did not set targets:</p>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="dealing-with-bimodality.html#cb53-1" tabindex="-1"></a>new_points <span class="ot">&lt;-</span> <span class="fu">generate_new_design</span>(bimodal_emulators, <span class="dv">150</span>, bimodal_targets, <span class="at">nth=</span><span class="dv">1</span>)</span></code></pre></div>
+<p>Similarly, performing the second wave is done in the same as it was in Section <a href="secondwave.html#secondwave">9</a>, replacing <code>emulator_type = 'variance'</code> with <code>emulator_type = 'multistate'</code> when calling <code>emulator_from_data</code>.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="visualisation-of-the-non-implausible-space-by-wave.html" class="navigation navigation-prev navigation-unique" aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": null,
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["_main.pdf"],
+"search": {
+"engine": "fuse",
+"options": null
+},
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>
